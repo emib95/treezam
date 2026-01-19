@@ -18,12 +18,27 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Database connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/treezam', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/treezam';
+
+mongoose.connect(MONGODB_URI)
+.then(() => {
+  console.log('✅ Connected to MongoDB Atlas');
+  console.log(`Database: ${mongoose.connection.name}`);
 })
-.then(() => console.log('Connected to MongoDB'))
-.catch(err => console.error('MongoDB connection error:', err));
+.catch(err => {
+  console.error('❌ MongoDB connection error:', err.message);
+  console.error('Please check your MONGODB_URI in .env file');
+  process.exit(1);
+});
+
+// Handle connection events
+mongoose.connection.on('disconnected', () => {
+  console.log('⚠️  MongoDB disconnected');
+});
+
+mongoose.connection.on('error', (err) => {
+  console.error('❌ MongoDB error:', err);
+});
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));

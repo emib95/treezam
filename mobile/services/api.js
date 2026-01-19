@@ -2,7 +2,8 @@ import axios from 'axios';
 
 // Get the base URL, defaulting to localhost for development
 // In production, this should be set to your production API URL
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000/api';
+// For physical devices, use your computer's IP address instead of localhost
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://192.168.1.182:3000/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
